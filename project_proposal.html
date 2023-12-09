@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Final Project Proposal</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="final-project-proposal">Final Project Proposal</h1>
+<p>Author: Harshvardhan Bhatnagar</p>
+<h2 id="project-overview">Project Overview</h2>
+<p>The project will be based on the dataset [Helmet Detection] (<a href="https://www.kaggle.com/andrewmvd/helmet-detection">https://www.kaggle.com/andrewmvd/helmet-detection</a>) from Kaggle. The dataset contains 764 images that have been labeled for the two categories:</p>
+<ul>
+<li>With Helmet</li>
+<li>Without Helmet</li>
+</ul>
+<p>Working with this dataset will allow me to delve into computer vision and image classification. The goal of the project is to create a model that can detect whether a person is wearing a helmet or not. This can be used in a variety of applications some of which are described below.</p>
+<ol>
+<li>Two-wheeler vehicles are commonplace in many developing countries and the number of accidents involving riders without helmets is very high. Countries like India struggle to enforce laws mandating the use of helmets. A model that can detect whether a person is wearing a helmet or not can be used to enforce the law and reduce the number of fatalities.</li>
+<li>A very similar model can be trained to detect whether a person is wearing a helmet or not in a construction site. This can be used to enforce safety regulations and prevent accidents, improving safety in the workplace as well as reducing the number of lawsuits that construction firms face. We may even be able to use the model trained by us and apply transfer learning to train a model for this specific use case.</li>
+</ol>
+<p>Some of the images in the dataset are shown below in Table 1.</p>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+  width: 90%;
+}
+table td, table th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  width: 30%;
+}
+</style>
+<table>
+    <tr>
+        <td><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/images/BikesHelmets734.png"></td>
+        <td><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/images/BikesHelmets735.png"></td>
+    </tr>
+    <tr>
+    <td>
+        <img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/images/BikesHelmets710.png">
+    </td>
+    <td>
+        <img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/images/BikesHelmets711.png">
+    </td>
+    </tr>
+    <tr>
+    <td colspan=2>
+        <center>Table 1: Images from the dataset</center>
+    </td>
+</table>
+<p>As seen above, the images clearly have varying backgrounds, lighting conditions, watermarks and some even have multiple people in them. This will make the task of classification more challenging.</p>
+<p>However, the dataset also provides information about the bounding boxes for regions of interest in the images. This will allow us to crop and regularize the images before feeding them into the model.</p>
+<p>Our primary focus will be on application of various methods for image classification and comparison of their performances. We will attempt to achieve the a decent balance between accuracy and computational requirements since the dataset is relatively small.</p>
+<h2 id="potential-methods">Potential Methods</h2>
+<p>We can explore several methods with varying levels of accuracy and feasibility. Some of these are described below.</p>
+<h3 id="method-1-basis-functions-for-feature-extraction--svm">Method 1: Basis Functions for Feature Extraction + SVM</h3>
+<p>We can use basis functions to crop and resize images, followed by applicaion of Kernels that help with feature extraction such as Gaussian Blurring and Sobel Edge Detection. The resulting images can then be fed into a Support Vector Machine (SVM) for classification.</p>
+<h3 id="method-2-convolutional-neural-networks">Method 2: Convolutional Neural Networks</h3>
+<p>We can use a Convolutional Neural Network (CNN) which will be able to learn convolutional filters that on its own using backpropagation. This will allow us to avoid the need for feature extraction. While this may be more accurate, it will also be more computationally expensive. However, since we can use a GPU for training and parallelization, this may not be a major issue on a small dataset like this.</p>
+<h3 id="method-3-ensemble-learning">Method 3: Ensemble Learning</h3>
+<p>We can use an ensemble of classifiers to improve the accuracy of the model. This can be done by training multiple models using different methods and then using a voting classifier to combine the results of the individual models. This will allow us to leverage the strengths of different methods and improve the accuracy of the model. We may also be able to use a CNN along with another classifier to improve the accuracy of the model.</p>
+<h3 id="method-4-transfer-learning">Method 4: Transfer Learning</h3>
+<p>We can use pre-trained models such as ResNet and VGG16 to perform transfer learning. These models already have their feature weights trained on large datasets and we may be able to produce better results by using these models as a starting point and then fine-tuning them for our dataset. This can help us achieve better results with less computational resources and possibly a smaller dataset.</p>
+<h2 id="model-selection-and-optimization-techniques">Model Selection and Optimization Techniques</h2>
+<p>It will be interesting to compare the results of these methods on various accuracy metrics such as precision, recall and F1 score. as well as their computational requirements using tools that allow us to profile the code.</p>
+<p>We can also explore how the performances of some of these methods vary with different preprocessing techniques such as cropping, resizing and normalization, especially for the SVM, which will be more sensitive to these changes.</p>
+<p>We will also try to perform hyperparameter tuning using cross-validation techniques such as Grid Search and explore how the performance of the model varies with different hyperparameters and infer some things about how the model works.</p>
+<p>Since this particular problem has potential real-world applications, we will try to incorporate some features that will make the model more useful in a real-world setting. For example, a false positive can be more dangerous than a false negative when classifying whether a person is wearing a helmet or not. We will try experimenting with our evaluation and model selection techniques to account for this.</p>
+<h2 id="citations">Citations</h2>
+<pre><code>@misc{make ml,
+title={Bikes Helmets Dataset},
+url={https://makeml.app/datasets/helmets},
+journal={Make ML}}
+
+License
+Public Domain
+
+</code></pre>
+
+        
+        
+    </body>
+    </html>

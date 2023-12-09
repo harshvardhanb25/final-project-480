@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <ul>
+<li>
+<p>What progress have you made so far? (share any preliminary results)</p>
+<p>I have completed the following tasks:</p>
+<ol>
+<li>Data collection</li>
+<li>Data Preparation:
+The original dataset contained nearly 450 images and corresponding annotation files. The annotation files were in the form of <code>.xml</code> files which contained information about the images and multiple bounding boxes for each image. I used the <code>xml</code> library's <code>etree</code> module to parse the <code>.xml</code> files and extract the bounding box coordinates and the class labels. I then analyzed the various features and removed several features that were constant accross all images since these were unlikely to have much predictive power. I also detected several bounding boxes that were outside the image bounds and removed these. This resulted in the removal of about 20 bounding boxes from the expected 1450. I stored the information about the overall image in a file called <code>images.csv</code> and that about the bounding boxes in  a file called <code>objects.csv</code>. <code>objects.csv</code> contains a foreign key mapping all bounding boxes to the images they belong to in <code>images.csv</code>.</li>
+<li>Image Snippet Extraction: Since we need to label each bounding box, I extracted the part of the image that was contained within the bounding box and saved it as a separate image. The image <code>BikesHelmets0.png</code> is shown below. Followed by the snippets extracted from it.</li>
+</ol>
+<p><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/images/BikesHelmets0.png" alt="BikesHelmets0.png"></p>
+  <center>Image BikesHelmets0.png</center>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/cropped_images/1229.jpg" alt="1229.jpg"></th>
+<th style="text-align:center"><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/cropped_images/1230.jpg" alt="1230.jpg"></th>
+<th style="text-align:center"><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/cropped_images/1231.jpg" alt="1231.jpg"></th>
+<th style="text-align:center"><img src="file:////Users/harshvardhanbhatnagar/Documents/ML/final-project/data/cropped_images/1232.jpg" alt="1232.jpg"></th>
+</tr>
+</thead>
+</table>
+<ol start="4">
+<li>Snippet Resizing: Since I plan on using a CNN for this task, I had to resize all the images of the areas of interest to the same size. I used some visual data analysis using scatterplots of image resolutions to get a fair estimate of the ideal size. The original scatterplot was dense in certain regions, so it was hard to get a good estimate and had to be zoomed into. I determined that a size of about 45x45 pixels would be a decent place to start.</li>
+</ol>
+</li>
+<li>
+<p>Some of the challenges I have so far have primarily been due to the differences between the <code>torchvision</code> library and <code>sklearn</code> which is what I have predominantly used in the past. However, the <code>torchvision</code> library is very well documented and I am beginning to grasp how to use transformers and define custom ones for various stages of the pipeline.</p>
+</li>
+<li>
+<p>Here is a tentative timeline for the rest of the project:</p>
+<ol>
+<li><strong>December 3rd</strong>: Complete implementing the transformer steps for image resizing, initial model training and testing.</li>
+<li><strong>December 4th-5th</strong>: Experiment with different model architectures and hyperparameters to improve performance.</li>
+<li><strong>December 6th-7th</strong>: Finalize the model and generate the final outputs.</li>
+<li><strong>December 8th</strong>: Prepare the final report and submit the project.</li>
+</ol>
+</li>
+</ul>
+<p>The code for the project has been sent to the email address provided in the instructions.</p>
+
+        
+        
+    </body>
+    </html>

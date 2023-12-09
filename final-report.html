@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Final Project Report</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="final-project-report">Final Project Report</h1>
+<p>Submitted by: Harshvardhan Bhatnagar</p>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Our project goal was to use machine learning to determine whether a person in an image is wearing a helmet or not. The dataset used was from Kaggle <a href="https://www.kaggle.com/andrewmvd/helmet-detection">Helmet Detection</a>. The dataset contained 764 images that had been labeled for the two categories:</p>
+<ul>
+<li>With Helmet (label: 0)</li>
+<li>Without Helmet (label: 1)</li>
+</ul>
+<p>The problem of helmet detection is important because it can be used in a variety of applications such as road safety and construction site safety. This particular dataset was chosen because of bounding box information provided a good starting point, reducing some steps from the process of inference.</p>
+<h2 id="2-background">2. Background</h2>
+<p>The data was initially available as 764 images along with their respective annotation files which provided information about the bounding-boxes in each image and the target label for each bouding box (<code>With Helmet</code>, <code>Without Helmet</code>). The data was first preprocessed to extract the parts of the images based on the bounding box information. These images were stored in a directory, along with two csv files:</p>
+<ul>
+<li><code>objects.csv</code>: which contained the bouding box information, the name of the cropped image, and the name of the original image as well as the target label.</li>
+<li><code>images.csv</code>: which simply contained the name of the name of the original image.</li>
+</ul>
+<p>For all future steps, we used an output value of 0 as a positive label (i.e. <code>With Helmet</code>) and an output value of 1 as a negative label (i.e. <code>Without Helmet</code>).</p>
+<p>Before training, we first used a label encoder to convert the target labels from strings to integers. The label for <code>With Helmet</code> was set to 0 and the label for <code>Without Helmet</code> was set to 1. The data was then split into training and validation sets based on the original images. Another approach was also used with stratification based on the target labels however, the results were only marginally better and it did not seem realistic since we were looking at parts of the same image in the training and validation sets.</p>
+<p>We prioritized the ROC AUC score over classification accuracy because in this case we would like to minimize the number of false positives. This is because we would like to avoid classifying a person without a helmet as having a helmet. This is because the consequences of a false positive are much more severe than those of a false negative.</p>
+<h2 id="3-methods">3. Methods</h2>
+<p>Since the dataset was relatively small, we decided to use a held-out test set for validation. We used a 80-20 split for the training and validation sets respectively. We also used a label encoder to convert the target labels from strings to integers.</p>
+<p>We decided to use CNNs for this problem because of their ability to extract features from images. In order to train our CNNs all images needed to have the same dimensionality which was estimated to be 45x45 pixels, using simple scatter-plots of the resolutions of the cropped images extracted earler. We defined a class called <code>ImageLoaderResizer</code> which could be used to load the cropped images and resize them based on the information in <code>objects_df</code>. This class was then used to create a <code>Dataset</code> object which was then used to create a <code>DataLoader</code> object. This <code>DataLoader</code> object was then used to train the CNNs.</p>
+<h3 id="31-initial-experimentation">3.1 Initial Experimentation</h3>
+<p>We attempted using a simple CNN with 3 convolutional layers and 2 fully connected layers, and an output layer that used a Sigmoid Function. The results were not very good with a ROC AUC score of 0.65. Following several unsatisfactory experiments, we defined an <code>ObjectClassifier</code> class which could be used to train and evaluate CNNs while varying the number of convolutional layers, their respective kernel sizes, output channels for the layer, and dropout rates. This class was then used to train and evaluate several CNNs with varying hyperparameters. The results of these experiments are discussed below. After initial experiments it was also determined that using:</p>
+<ul>
+<li><code>ReLU</code> activation function for the convolutional layers, along with pooling layers with a kernel-size of 2</li>
+<li>two fully connected layers, and a <code>LogSoftmax</code> activation function for the output layer worked best.</li>
+<li>Using the <code>Adam</code> optimizer with a learning rate of 0.001</li>
+</ul>
+<p>Seemed to work best. These parameters were used for all future experiments.</p>
+<h4 id="311-model-1">3.1.1 Model 1</h4>
+<p>After experimentally reaching the intermediate conclusions above, we trained a CNN with 2 convolutional the Kernels had the following parameters:</p>
+<ul>
+<li>Kernel 1: 3x3, 16 output channels</li>
+<li>Kernel 2: 3x3, 32 output channels</li>
+<li>dropout probability: 0.4</li>
+</ul>
+<p>The fully connected layers had 128 and 2 output channels respectively. The dropout probability was set to 0.4. The model was trained for 50 epochs with a batch size of 32. The Loss Function used was <code>NLLLoss</code> and the optimizer used was <code>Adam</code> with a learning rate of 0.001. The results were as follows:</p>
+<ul>
+<li>training loss on final epoch: 0.055</li>
+<li>training accuracy on final epoch: 0.980</li>
+</ul>
+<center> 
+<image src="output/model_tl_ta.png">
+Figure 1: Training Loss and Accuracy for Model 1
+</center>
+<center> 
+<image src="output/model_1_predictions.png">
+Figure 2: 20 Random Sample Predictions from Model 1
+</center>
+<center>
+<image src="output/model_1_roc.png">
+Figure 3: ROC Curve for Model 1
+</center>
+<p>The ROC-AUC Score was thus determined to be 0.812, along with a test classification accuracy of 0.884. The model was then saved to <code>models/model_1.pt</code>.</p>
+<h4 id="312-model-2">3.1.2 Model 2</h4>
+<p>We then trained a CNN with 3 convolutional layers. The Kernels had the following parameters:</p>
+<ul>
+<li>Kernel 1: 3x3, 16 output channels</li>
+<li>Kernel 2: 3x3, 32 output channels</li>
+<li>Kernel 3: 3x3, 64 output channels</li>
+<li>dropout probability: 0.4</li>
+</ul>
+<p>The fully connected layers had 128 and 2 output channels respectively. The dropout probability was set to 0.4. The model was trained for 50 epochs with a batch size of 32. The Loss Function used was <code>NLLLoss</code> and the optimizer used was <code>Adam</code> with a learning rate of 0.001. The results were as follows:</p>
+<ul>
+<li>training loss on final epoch: 0.091</li>
+<li>training accuracy on final epoch: 0.966</li>
+</ul>
+<center>
+<image src="output/model_2_tl_ta.png">
+Figure 4: Training Loss and Accuracy for Model 2
+</center>
+<center>
+<image src="output/model_2_predictions.png">
+Figure 5: 20 Random Sample Predictions from Model 2
+</center>
+<center>
+<image src="output/model_2_roc.png">
+Figure 6: ROC Curve for Model 2
+</center>
+<p>The ROC-AUC Score was thus determined to be 0.628, along with a test classification accuracy of 0.894. The model was then saved to <code>models/model_2.pt</code>.</p>
+<h4 id="313-model-3">3.1.3 Model 3</h4>
+<p>Even though Model 2 had a higher classification accuracy, it had a lower ROC-AUC score. We decided to train another model with 3 convolutional layers, but using a different loss criterion <code>CrossEntropyLoss</code> instead of <code>NLLLoss</code>. The Kernels had the following parameters:</p>
+<ul>
+<li>Kernel 1: 3x3, 16 output channels</li>
+<li>Kernel 2: 3x3, 32 output channels</li>
+<li>Kernel 3: 3x3, 64 output channels</li>
+<li>dropout probability: 0.4</li>
+</ul>
+<p>The fully connected layers had 128 and 2 output channels respectively. The dropout probability was set to 0.4. The model was trained for 50 epochs with a batch size of 32. The Loss Function used was <code>CrossEntropyLoss</code> and the optimizer used was <code>Adam</code> with a learning rate of 0.001. The results were as follows:</p>
+<ul>
+<li>training loss on final epoch: 0.076</li>
+<li>training accuracy on final epoch: 0.973</li>
+</ul>
+<center>
+<image src="output/model_3_tl_ta.png">
+Figure 7: Training Loss and Accuracy for Model 3
+</center>
+<center>
+<image src="output/model_3_predictions.png">
+Figure 8: 20 Random Sample Predictions from Model 3
+</center>
+<center>
+<image src="output/model_3_roc.png">
+Figure 9: ROC Curve for Model 3
+</center>
+<p>The ROC-AUC Score was thus determined to be 0.787, along with a test classification accuracy of 0.893. The model was then saved to <code>models/model_3.pt</code>.</p>
+<h4 id="314-model-4">3.1.4 Model 4</h4>
+<p>Since we were able to improve the performance of model 2 by changing the loss criterion, we decided to attempt the same with model 1. We trained a CNN with 2 convolutional layers and loss criterion <code>CrossEntropyLoss</code>. The Kernels had the following parameters:</p>
+<ul>
+<li>Kernel 1: 3x3, 16 output channels</li>
+<li>Kernel 2: 3x3, 32 output channels</li>
+<li>dropout probability: 0.4</li>
+</ul>
+<p>The fully connected layers had 128 and 2 output channels respectively. The dropout probability was set to 0.4. The model was trained for 50 epochs with a batch size of 32. The Loss Function used was <code>CrossEntropyLoss</code> and the optimizer used was <code>Adam</code> with a learning rate of 0.001. The results were as follows:</p>
+<ul>
+<li>training loss on final epoch: 0.067</li>
+<li>training accuracy on final epoch: 0.978</li>
+</ul>
+<center>
+<image src="output/model_4_tl_ta.png">
+Figure 10: Training Loss and Accuracy for Model 4
+</center>
+<center>
+<image src="output/model_4_predictions.png">
+Figure 11: 20 Random Sample Predictions from Model 4
+</center>
+<center>
+<image src="output/model_4_roc.png">
+Figure 12: ROC Curve for Model 4
+</center>
+<p>The ROC-AUC Score was thus determined to be 0.803, along with a test classification accuracy of 0.880. The model was then saved to <code>models/model_4.pt</code>.</p>
+<h2 id="4-results">4. Results</h2>
+<p>After several experiments, we determined that Model 1 performed the best with a ROC-AUC score of 0.812. The architecture of Model 1 is shown below:</p>
+<center>
+<image src="output/model_1_graph.png">
+Figure 13: Architecture of Model 1
+</center>
+<p>The results for each of the cropped images along with the true and predicted labels are shown below:</p>
+<center>
+<image src="output/final_predictions_0.png">
+<image src="output/final_predictions_1.png">
+<image src="output/final_predictions_2.png">
+<image src="output/final_predictions_3.png">
+<image src="output/final_predictions_4.png">
+<image src="output/final_predictions_5.png">
+<image src="output/final_predictions_6.png">
+<image src="output/final_predictions_7.png">
+<image src="output/final_predictions_8.png">
+Figures 14-22: Predictions for each cropped image in the randomlly selected test set.
+</center>
+<p>From an analysis of the predictions above as well as the results noted in Section 3.1.1. We have been able to achieve a ROC-AUC score of 0.812 and a test classification accuracy of 0.884. We can also see from the images above that the model is generally good at accurately labeling any images with a person not wearing a helmet except when the person in the image is wearing some form of head covering. This needs to be improved, however, it is difficult to do so without a larger dataset.</p>
+<p>The biggest hurdle in the implementation of this project was the small dataset size which significantly limited the accuracy we could hope to achieve.</p>
+
+        
+        
+    </body>
+    </html>
